@@ -8,6 +8,6 @@ admin.site.register(Quantity)
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-#    fields = ['author', 'name', 'description', 'ingredients']
+   # fields = ['author', 'name', 'description', 'cooking_time', 'image', 'ingredients', 'tag']
     list_display = ['name', 'author']
     list_filter = ['author', 'name', 'tag']
