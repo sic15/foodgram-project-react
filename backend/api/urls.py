@@ -9,7 +9,7 @@ router = DefaultRouter() #SimpleRouter()
 router.register('tags', views.TagViewSet, basename = 'tags')
 router.register('recipes', views.RecipeViewSet)
 router.register('ingredients', views.IngredientViewSet)
-router.register('quantitys', views.QuantityViewSet)
+router.register('amount', views.AmountIngredientViewSet)
 #router.register('users', views.UserViewSet)
 #router.register('subscriptions', views.SubscribeViewSet)
 

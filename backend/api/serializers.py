@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from food.models import Tag, Ingredient, Recipe, Quantity
+from food.models import Tag, Ingredient, Recipe, AmountIngredient
 from user.models import User, Subscribe
 #from djoser.serializers import UserSerializer
 
@@ -11,9 +11,10 @@ class TagSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class IngredientSerializer(serializers.ModelSerializer):
+    #amount = 
     class Meta:
         model = Ingredient
-        fields = '__all__'
+        fields = ('id', 'name', 'measurement_unit', 'amount_ingredient')
 
 class UserinfoSerializer(serializers.ModelSerializer):
     is_subscribed = serializers.SerializerMethodField()
@@ -28,18 +29,19 @@ class UserinfoSerializer(serializers.ModelSerializer):
                                             author=obj).exists()
         return False
 
+class AmountIngredientSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = AmountIngredient
+        fields = '__all__'
+
 class RecipeSerializer(serializers.ModelSerializer):
     tag = TagSerializer(many=True, read_only=True)
     author = UserinfoSerializer(read_only=True)
+  #  ingredients = AmountIngredientSerializer(many=True, read_only=True)
     ingredients = IngredientSerializer(many=True, read_only=True)
     class Meta:
         model = Recipe
-        fields = '__all__'
-
-class QuantitySerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Quantity
         fields = '__all__'
 
 

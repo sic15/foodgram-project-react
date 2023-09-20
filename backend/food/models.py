@@ -28,7 +28,7 @@ class Ingredient(models.Model):
     MEASURE_CHOISES = [('g', 'г'), ('kg', 'кг'), ('l', 'л'), ('ml', 'мл'), ('piece', 'шт')]
 
     name = models.CharField(max_length=50)
-    measure = models.CharField(max_length=5, choices=MEASURE_CHOISES)
+    measurement_unit = models.CharField(max_length=5, choices=MEASURE_CHOISES)
     
     class Meta:
         ordering = ['name']
@@ -52,7 +52,7 @@ class Recipe(models.Model):
         upload_to='recipes/',
         blank=True
     )
-    ingredients = models.ManyToManyField(Ingredient, through='Quantity', through_fields=('recipe', 'measure'),)
+    ingredients = models.ManyToManyField(Ingredient, through='AmountIngredient')
     tag = models.ManyToManyField(Tag, related_name='recipe')
     
     class Meta:
@@ -63,11 +63,11 @@ class Recipe(models.Model):
     def __str__(self):
         return self.name
 
-class Quantity(models.Model):
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='recipes',
+class AmountIngredient(models.Model):
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='recipe',
         verbose_name='Рецепт')
-    quantity = models.FloatField("Количество")
-    measure = models.ForeignKey(Ingredient, on_delete=models.CASCADE, related_name='ingredients',
+    amount = models.FloatField("Количество")
+    ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE, related_name='amount_ingredient',
         verbose_name='Ингредиент')
     
     class Meta:
@@ -75,7 +75,7 @@ class Quantity(models.Model):
         verbose_name_plural = 'Ингредиенты в рецептах'
         constraints = [
             models.UniqueConstraint(
-                fields=['recipe', 'measure'],
+                fields=['recipe', 'ingredient'],
                 name='unique_combination'
             )
         ]
@@ -87,7 +87,7 @@ class Favorite(models.Model):
         related_name='user_recipe')
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='recipe_user')
 
-class ShoppingList(models.Model):
+class ShoppingCart(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,

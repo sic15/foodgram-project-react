@@ -8,8 +8,8 @@ from rest_framework.decorators import action
 
 
 from api import serializers
-from food.models import Tag, Recipe, Ingredient, Quantity, Favorite
-from .serializers import TagSerializer, IngredientSerializer, RecipeSerializer, QuantitySerializer, UserinfoSerializer, SubscribeSerializer, FavoriteSerializer
+from food.models import Tag, Recipe, Ingredient, AmountIngredient, Favorite, ShoppingCart
+from .serializers import TagSerializer, IngredientSerializer, RecipeSerializer, AmountIngredientSerializer, UserinfoSerializer, SubscribeSerializer, FavoriteSerializer
 from user.models import User, Subscribe
 
 from rest_framework.decorators import api_view
@@ -30,9 +30,15 @@ class RecipeViewSet(viewsets.ModelViewSet):
     serializer_class = RecipeSerializer
     pagination_class = PageNumberPagination
 
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
+
+
     @action(detail=True, methods=['post', 'delete'],)
            # permission_classes=(IsAuthenticated,))
     def favorite(self, request, **kwargs):
+        print('запущена функция списка покупок')
         recipe = get_object_or_404(Recipe, id=kwargs['pk'])
 
         if request.method == 'POST':
@@ -49,13 +55,34 @@ class RecipeViewSet(viewsets.ModelViewSet):
                               recipe=recipe).delete()
             return Response({'detail': 'Рецепт успешно удален из избранного.'},
                             status=status.HTTP_204_NO_CONTENT)
+        
+    @action(detail=True, methods=['get', 'post', 'delete'],)
+           # permission_classes=(IsAuthenticated,))
+    def shopping_cart(self, request, **kwargs):
+        recipe = get_object_or_404(Recipe, id=kwargs['pk'])
 
-class QuantityViewSet(viewsets.ModelViewSet):
-    queryset =Quantity.objects.all()
-    serializer_class = QuantitySerializer
+        if request.method == 'POST':
+            if not ShoppingCart.objects.filter(user=request.user,
+                                           recipe=recipe).exists():
+                ShoppingCart.objects.create(user=request.user, recipe=recipe)
+                return Response({'detail': 'Рецепт успешно добавлен в список покупок.'},
+                                status=status.HTTP_201_CREATED)
+            return Response({'errors': 'Рецепт уже в списке покупок.'},
+                            status=status.HTTP_400_BAD_REQUEST)
+        
+        if request.method == 'DELETE':
+            get_object_or_404(ShoppingCart, user=request.user,
+                              recipe=recipe).delete()
+            return Response({'detail': 'Рецепт успешно удален из списка покупок.'},
+                            status=status.HTTP_204_NO_CONTENT)
+        
+
+class AmountIngredientViewSet(viewsets.ModelViewSet):
+    queryset =AmountIngredient.objects.all()
+    serializer_class = AmountIngredientSerializer
 
   #  def get_queryset(self):
-  #      queryset = Quantity.objects.filter(recipe = self.recipe)
+  #      queryset = AmountIngredient.objects.filter(recipe = self.recipe)
   #      return queryset
 
 
