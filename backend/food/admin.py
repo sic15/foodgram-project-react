@@ -10,7 +10,7 @@ admin.site.register(AmountIngredient)
 class RecipeAdmin(admin.ModelAdmin):
    # fields = ['author', 'name', 'description', 'cooking_time', 'image', 'ingredients', 'tag']
     list_display = ['name', 'author']
-    list_filter = ['author', 'name', 'tag']
+    list_filter = ['author', 'name', 'tags']
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):

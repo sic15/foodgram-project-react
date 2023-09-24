@@ -14,8 +14,9 @@ router.register('amount', views.AmountIngredientViewSet)
 #router.register('subscriptions', views.SubscribeViewSet)
 
 urlpatterns = [
-    
-    path('users/<int:pk>/subscriptions/', views.APICreateSubscribe.as_view()),
+  #  path('users/', views.APISubscribe.as_view()),
+
+    path('users/<int:pk>/subscribe/', views.APICreateDeleteSubscribe.as_view()),
     path('users/subscriptions/', views.APISubscribe.as_view()),
     path('users/<int:pk>/', views.APIUserInfo.as_view()),
     path('auth/', include('djoser.urls')),

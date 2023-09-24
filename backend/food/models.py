@@ -43,9 +43,9 @@ class Recipe(models.Model):
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='recipe')
+        related_name='recipes')
     name = models.CharField(max_length=50)
-    description = models.TextField()
+    text = models.TextField()
     cooking_time = models.IntegerField()
     image = models.ImageField(
         'Картинка',
@@ -53,7 +53,7 @@ class Recipe(models.Model):
         blank=True
     )
     ingredients = models.ManyToManyField(Ingredient, through='AmountIngredient')
-    tag = models.ManyToManyField(Tag, related_name='recipe')
+    tags = models.ManyToManyField(Tag, related_name='recipe')
     
     class Meta:
         ordering = ['name']
@@ -87,6 +87,7 @@ class Favorite(models.Model):
         related_name='user_recipe')
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='recipe_user')
 
+
 class ShoppingCart(models.Model):
     user = models.ForeignKey(
         User,
@@ -94,7 +95,8 @@ class ShoppingCart(models.Model):
         related_name='user_shopping')
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='shopping_user')
 
-
+    def __str__(self):
+        return f'пользователь {self.user.username} имеет в списке покупок {self.recipe.name}'
 
 
 
