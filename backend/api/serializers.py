@@ -1,3 +1,5 @@
+
+from drf_base64.fields import Base64ImageField
 from rest_framework import serializers
 from food.models import Tag, Ingredient, Recipe, AmountIngredient, ShoppingCart, Favorite
 from user.models import User, Subscribe
@@ -6,11 +8,12 @@ from user.models import User, Subscribe
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
-        fields = '__all__'
+        fields = ("id", "name", "color", "slug")
+        read_only_fields=("name", "color", "slug")
 
 class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
-        model = AmountIngredient
+        model = Ingredient
         fields = "__all__"
 
 class AmountIngredientSerializer(serializers.ModelSerializer):
@@ -44,22 +47,15 @@ class UserinfoSerializer(serializers.ModelSerializer):
         return False
 
 
-class RecipeSerializer(serializers.ModelSerializer):
-    tags = TagSerializer(many=True, read_only=True)
+class RecipeReadSerializer(serializers.ModelSerializer):
+    tags = TagSerializer(many=True)
     author = UserinfoSerializer(read_only=True)
     ingredients = RecipeIngredientSerializer(many=True, read_only=True, source='recipe')
-   # ingredients = serializers.SerializerMethodField()
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
     class Meta:
         model = Recipe
         fields = '__all__'
-
-    def get_ingredients(self, obj):
-        queryset=Ingredient.objects.filter(recipe=obj)
-        serializer=RecipeIngredientSerializer(data=queryset,many=True)
-        serializer.is_valid()
-        return serializer.data
 
     def get_is_favorited(self, obj):
         return (
@@ -100,6 +96,21 @@ class SubscribeSerializer(serializers.ModelSerializer):
     def get_recipes_count(self, obj):
         return obj.recipes.count()
     
+class BaseSubscribeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = "__all__"#("email", "id", "username", "first_name", "last_name",'is_subscribed', "recipes", "recipes_count")
+
+
+class SubscribeCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subscribe
+        fields = '__all__'
+
+    def to_representation(self, instance):
+        serializer = SubscribeSerializer(instance.author)
+        return serializer.data 
+
 
 class FavoriteSerializer(serializers.ModelSerializer):
     class Meta:
@@ -110,3 +121,47 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
     class Meta:
         model = ShoppingCart
         fields = '__all__'
+
+class RecipeIngredientCreateSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField()
+    #id=serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
+    class Meta:
+        model = AmountIngredient
+        fields = ('id', 'amount')
+
+
+class RecipeChangeSerializer(serializers.ModelSerializer):
+    tags = serializers.PrimaryKeyRelatedField(many=True,
+                                              queryset=Tag.objects.all())
+    author = UserinfoSerializer(read_only=True)
+    id = serializers.ReadOnlyField()
+    ingredients = RecipeIngredientCreateSerializer(many=True)
+   # image = Base64ImageField(blank=True)
+
+    class Meta:
+        model = Recipe
+        fields = ('id', 'ingredients',
+                 'image',"tags",
+                  'name', 'text',
+                  'cooking_time', 'author')
+        
+    def to_representation(self, instance):
+        request = self.context.get('request')
+        serializer = RecipeReadSerializer(instance, context={'request':request})
+        return serializer.data        
+        
+    def create(self, validated_data):
+        ingredients = validated_data.pop('ingredients')
+        tags = validated_data.pop('tags')
+        recipe = Recipe.objects.create(**validated_data)
+        for ingredient in ingredients:
+            id = ingredient['id']
+            current_ingredient = Ingredient.objects.get(id = id)
+            amount = ingredient['amount']
+            AmountIngredient.objects.create(
+                ingredient=current_ingredient, recipe=recipe, amount=amount)
+        recipe.tags.set(tags)
+        return recipe
+
+        
+    

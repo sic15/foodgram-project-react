@@ -1,3 +1,4 @@
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Sum
 from django_filters.rest_framework import DjangoFilterBackend
 from django.http import HttpResponse
@@ -10,9 +11,11 @@ from rest_framework.views import APIView
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+
 from food.models import Tag, Recipe, Ingredient, AmountIngredient, Favorite, ShoppingCart
-from .serializers import TagSerializer, IngredientSerializer, RecipeSerializer, AmountIngredientSerializer, UserinfoSerializer, SubscribeSerializer, FavoriteSerializer, ShoppingCartSerializer
+from .serializers import TagSerializer, IngredientSerializer, RecipeReadSerializer, AmountIngredientSerializer, UserinfoSerializer, SubscribeSerializer, FavoriteSerializer, ShoppingCartSerializer, SubscribeCreateSerializer, RecipeChangeSerializer
 from user.models import User, Subscribe
+from .filters import RecipeFilter
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
@@ -29,10 +32,14 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
-    serializer_class = RecipeSerializer
     pagination_class = PageNumberPagination
     filter_backends = (DjangoFilterBackend,)
-    filterset_fields = ('author', 'tags',)# 'is_favorited', 'is_in_shopping_cart')
+    filterset_class = RecipeFilter
+
+    def get_serializer_class(self):
+        if self.action in ('list', 'retrive'):
+            return RecipeReadSerializer
+        return RecipeChangeSerializer
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -115,20 +122,26 @@ class APISubscribe(generics.ListAPIView):
 class APICreateDeleteSubscribe(APIView):
     def post(self, request, pk):
         id = self.request.user.id
-        data = {'user':id, 'author': pk}
-        serializer = SubscribeSerializer(data=data)
-        if serializer.is_valid() and id!=pk:
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED) 
         if id == pk:
             return Response({'errors': 'Нельзя подписаться на себя.'}, status=status.HTTP_400_BAD_REQUEST)
+        author = User.objects.get(id=pk)
+        if Subscribe.objects.filter(user=self.request.user, author = author).exists():
+            return Response({'errors': 'Подписка уже существует.'}, status=status.HTTP_400_BAD_REQUEST)
+        data = {'user':id, 'author': pk}
+        serializer = SubscribeCreateSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED) 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
     
     def delete(self, request, pk):
-        subscribe = Subscribe.objects.get(user=self.request.user, author=get_object_or_404(User, id=pk) )
+        try:
+            subscribe = Subscribe.objects.get(user=self.request.user, author=get_object_or_404(User, id=pk))
+        except ObjectDoesNotExist:
+            return Response({'errors': 'Такой подписки не существует.'}, status=status.HTTP_400_BAD_REQUEST)
         subscribe.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-    
+        return Response({'message': 'Подписка успешно удалена.'}, status=status.HTTP_204_NO_CONTENT)
+
 
 class APIUser(generics.ListCreateAPIView):
     queryset = User.objects.all()

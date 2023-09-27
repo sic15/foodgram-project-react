@@ -9,3 +9,4 @@ typing_extensions==4.7.1
 tzdata==2023.3
 transliterate
 django-filter
+drf-base64-filename

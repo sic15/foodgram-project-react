@@ -8,8 +8,8 @@ from user.models import User
 
 
 class Tag(models.Model):
-    name = models.CharField(max_length=20)
-   # color = models.Choices
+    name = models.CharField(max_length=20, verbose_name='Имя тэга')
+    color = models.CharField(max_length=7, verbose_name='Цвет')
     slug = models.SlugField(default='', null = True, blank = True)
 
     def save(self, *args, **kwargs):
@@ -84,8 +84,8 @@ class Favorite(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='user_recipe')
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='recipe_user')
+        related_name='user_favorite')
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='favorite_recipe')
 
 
 class ShoppingCart(models.Model):
