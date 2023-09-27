@@ -1,22 +1,46 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Sum
-from django_filters.rest_framework import DjangoFilterBackend
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from rest_framework.permissions import IsAuthenticated
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, status, generics, status
-from rest_framework.response import Response
-from rest_framework.pagination import PageNumberPagination
-from rest_framework.views import APIView
 from rest_framework.decorators import action
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
 from rest_framework.response import Response
-
+from djoser.views import UserViewSet as DjoserUserViewSet
 
 from food.models import Tag, Recipe, Ingredient, AmountIngredient, Favorite, ShoppingCart
-from .serializers import TagSerializer, IngredientSerializer, RecipeReadSerializer, AmountIngredientSerializer, UserinfoSerializer, SubscribeSerializer, FavoriteSerializer, ShoppingCartSerializer, SubscribeCreateSerializer, RecipeChangeSerializer
+from .serializers import (TagSerializer, IngredientSerializer, 
+                          RecipeReadSerializer, AmountIngredientSerializer, 
+                          UserinfoSerializer, SubscribeSerializer, 
+                          ShoppingCartSerializer, SubscribeCreateSerializer, 
+                          RecipeChangeSerializer, PasswordSerializer, UserSerializer)
 from user.models import User, Subscribe
 from .filters import RecipeFilter
 
+class UserViewSet(DjoserUserViewSet, viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    pagination_class = PageNumberPagination
+    serializer_class = UserSerializer
+
+    @action(detail=False, methods=['get'],
+            pagination_class=None,
+            permission_classes=(IsAuthenticated,))
+    def me(self, request):
+        serializer = UserSerializer(request.user)
+        return Response(serializer.data,
+                        status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['post'],
+            permission_classes=(IsAuthenticated,))
+    def set_password(self, request):
+        serializer = PasswordSerializer(request.user, data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+        return Response({'detail': 'Пароль успешно изменен!'},
+                        status=status.HTTP_204_NO_CONTENT)
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
@@ -48,7 +72,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['post', 'delete'],
         permission_classes=(IsAuthenticated,))
     def favorite(self, request, **kwargs):
-        print('запущена функция списка покупок')
         recipe = get_object_or_404(Recipe, id=kwargs['pk'])
 
         if request.method == 'POST':
@@ -148,9 +171,38 @@ class APIUser(generics.ListCreateAPIView):
     serializer_class = UserinfoSerializer
     pagination_class = PageNumberPagination
 
+    @action(detail=True, methods=['post'])
+    def set_password(self, request):
+        user = self.get_object()
+        serializer = PasswordSerializer(data=request.data)
+        if serializer.is_valid():
+            user.password = serializer.validated_data['password']
+            user.save()
+            return Response({'status': 'password set'})
+        else:
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
+
 class APIUserInfo(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserinfoSerializer
+    
+
+#class CurrentUserInfo(viewsets.ModelViewSet):
+#    serializer_class = UserinfoSerializer
+#    pagination_class=None
+
+##    def get_queryset(self):
+ #       return User.objects.filter(id = self.request.user.id)
+    
+#class APICurrentUserInfo(APIView):
+#    def get(self, request):
+#        current_user = User.objects.get(user = request.user)
+#        serializer = UserinfoSerializer(current_user)
+#        return Response(serializer.data)
+
+  #  def get_queryset(self):
+   #     return User.objects.filter(id = self.request.user.id)
 
 class APIShoppingCart(APIView):
     def get(self, request):

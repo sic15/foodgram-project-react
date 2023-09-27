@@ -4,6 +4,20 @@ from rest_framework import serializers
 from food.models import Tag, Ingredient, Recipe, AmountIngredient, ShoppingCart, Favorite
 from user.models import User, Subscribe
 
+class UserSerializer(serializers.ModelSerializer):
+    is_subscribed = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ("email", "id", "username", "first_name", "last_name", "is_subscribed")
+
+    def get_is_subscribed(self, obj):
+        if (self.context.get('request')
+           and not self.context['request'].user.is_anonymous):
+            return Subscribe.objects.filter(user=self.context['request'].user,
+                                            author=obj).exists()
+        return False
+
 
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
@@ -20,6 +34,36 @@ class AmountIngredientSerializer(serializers.ModelSerializer):
     class Meta:
         model = AmountIngredient
         fields = '__all__'
+
+class PasswordSerializer(serializers.Serializer):
+    current_password = serializers.CharField()
+    new_password = serializers.CharField()
+ #   class Meta:
+ #       model = User
+ #       fields = ('new_password', 'current_password')
+
+  #  def validate(self, obj):
+  #      try:
+  #          validate_password(obj['new_password'])
+  #      except django_exceptions.ValidationError as e:
+  #          raise serializers.ValidationError(
+  #              {'new_password': list(e.messages)}
+  #          )
+  #      return super().validate(obj)
+
+    def update(self, instance, validated_data):
+        if not instance.check_password(validated_data['current_password']):
+            raise serializers.ValidationError(
+                {'current_password': 'Неверный текущий пароль.'}
+            )
+        if (validated_data['current_password']
+           == validated_data['new_password']):
+            raise serializers.ValidationError(
+                {'new_password': 'Новый пароль должен отличаться от текущего.'}
+            )
+        instance.set_password(validated_data['new_password'])
+        instance.save()
+        return validated_data
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):
     id = serializers.ReadOnlyField(source='ingredient.id')
@@ -124,7 +168,6 @@ class ShoppingCartSerializer(serializers.ModelSerializer):
 
 class RecipeIngredientCreateSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField()
-    #id=serializers.PrimaryKeyRelatedField(queryset=Ingredient.objects.all())
     class Meta:
         model = AmountIngredient
         fields = ('id', 'amount')

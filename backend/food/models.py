@@ -4,8 +4,6 @@ from transliterate import translit
 
 from user.models import User
 
-#User = get_user_model()
-
 
 class Tag(models.Model):
     name = models.CharField(max_length=20, verbose_name='Имя тэга')
