@@ -1,4 +1,4 @@
-asgiref==3.7.2
+asgiref == 3.7.2
 Django==4.2.5
 django-filter==23.2
 djangorestframework==3.14.0
@@ -10,3 +10,7 @@ tzdata==2023.3
 transliterate
 django-filter
 drf-base64-filename
+drf_yasg
+djoser
+django-cors-headers==3.13.0
+psycopg2-binary==2.9.3

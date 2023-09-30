@@ -39,6 +39,8 @@ INSTALLED_APPS = [
 
 REST_FRAMEWORK = {
       'DEFAULT_PERMISSION_CLASSES': [
+   #     'rest_framework.permissions.AllowAny', 
+          
         'rest_framework.permissions.IsAuthenticatedOrReadOnly', 
     ],
 
@@ -48,14 +50,11 @@ REST_FRAMEWORK = {
    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 5,
 
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly', 
-    ],
 } 
-SIMPLE_JWT = {
-   'ACCESS_TOKEN_LIFETIME': timedelta(days=100),
-   'AUTH_HEADER_TYPES': ('Bearer',),
-} 
+#SIMPLE_JWT = {
+#   'ACCESS_TOKEN_LIFETIME': timedelta(days=100),
+##   'AUTH_HEADER_TYPES': ('Bearer',),
+#} 
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -101,6 +100,17 @@ DATABASES = {
     }
 }
 
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.postgresql',
+#        'NAME': os.getenv('POSTGRES_DB', 'django'),
+#        'USER': os.getenv('POSTGRES_USER', 'django'),
+#        'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
+#        'HOST': os.getenv('DB_HOST', ''),
+#        'PORT': os.getenv('DB_PORT', 5432)
+#    }
+#}
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -138,11 +148,17 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
+#STATIC_URL = '/static/'
+#STATIC_ROOT = BASE_DIR / 'collected_static'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 STATIC_URL = '/static_backend/'
 STATIC_ROOT = BASE_DIR / 'static_backend'
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = '/media'
+#MEDIA_URL = '/media/'
+#MEDIA_ROOT = '/media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

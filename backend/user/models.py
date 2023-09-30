@@ -14,6 +14,7 @@ class User(AbstractUser):
     )
     email = models.EmailField(
         max_length=50,
+        unique=True,
         verbose_name='email',
     )
     first_name = models.CharField(
@@ -26,6 +27,8 @@ class User(AbstractUser):
         verbose_name='фамилия',
         blank=True
     )
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
 
     def __str__(self):
         return self.username

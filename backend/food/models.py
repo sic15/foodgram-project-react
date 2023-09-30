@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils.text import slugify
 from transliterate import translit
 
@@ -48,7 +49,7 @@ class Recipe(models.Model):
     image = models.ImageField(
         'Картинка',
         upload_to='recipes/',
-        blank=True
+      #  blank=True
     )
     ingredients = models.ManyToManyField(Ingredient, through='AmountIngredient')
     tags = models.ManyToManyField(Tag, related_name='recipe')
@@ -64,7 +65,8 @@ class Recipe(models.Model):
 class AmountIngredient(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='recipe',
         verbose_name='Рецепт')
-    amount = models.FloatField("Количество")
+    amount = models.PositiveSmallIntegerField(verbose_name="Количество",  validators=(
+            MinValueValidator(0, "Количество не может быть 0"),))
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE, related_name='amount_ingredient',
         verbose_name='Ингредиент')
     
