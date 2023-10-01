@@ -14,4 +14,4 @@ class RecipeAdmin(admin.ModelAdmin):
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
-    fields=['name']
+    fields=['name', 'color']

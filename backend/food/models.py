@@ -26,8 +26,8 @@ class Tag(models.Model):
 class Ingredient(models.Model):
     MEASURE_CHOISES = [('g', 'г'), ('kg', 'кг'), ('l', 'л'), ('ml', 'мл'), ('piece', 'шт')]
 
-    name = models.CharField(max_length=50)
-    measurement_unit = models.CharField(max_length=5, choices=MEASURE_CHOISES)
+    name = models.CharField(max_length=200)
+    measurement_unit = models.CharField(max_length=10, choices=MEASURE_CHOISES)
     
     class Meta:
         ordering = ['name']

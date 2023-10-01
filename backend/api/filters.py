@@ -14,7 +14,7 @@ class RecipeFilter(filters.FilterSet):
         fields = ['is_favorited', 'author', 'tags', 'is_in_shopping_cart']
 
     def filter_tags(self, queryset, slug, tags):
-        print(tags)
+      #  print(tags)
         return queryset.filter(tags__slug__contains=tags.split(','))
     
     def is_favorite_filter(self, queryset, name, value):
@@ -28,3 +28,4 @@ class RecipeFilter(filters.FilterSet):
         if value and user.is_authenticated:
             return queryset.filter(shopping_user__user=user)
         return queryset
+    

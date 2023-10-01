@@ -3,7 +3,7 @@ from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, status, generics, status
+from rest_framework import viewsets, status, generics, status, filters
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
 from rest_framework.permissions import IsAuthenticated, AllowAny
@@ -21,9 +21,9 @@ from .serializers import (TagSerializer, IngredientSerializer,
 from user.models import User, Subscribe
 from .filters import RecipeFilter
 from .permissions import IsAuthorChangeOnly
+from .pagination import SubscribePagination
 
 class UserViewSet(DjoserUserViewSet):
-   # queryset = User.objects.all()
     pagination_class = PageNumberPagination
     permission_classes = (AllowAny,)
 
@@ -31,12 +31,6 @@ class UserViewSet(DjoserUserViewSet):
         if self.action in ('list', 'retrieve'):
             return UserReadSerializer
         return UserCreateSerializer
-    
-   # def list(self, request):
-   #     queryset = User.objects.all()
-   #     serializer = UserReadSerializer(queryset, many=True)
-   #     return Response(serializer.data)
-
 
     @action(detail=False, methods=['get'],
             pagination_class=None,
@@ -61,11 +55,15 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
     pagination_class=None
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     pagination_class=None
-    filter_backends = (DjangoFilterBackend,)
-    filterset_fields = ('name',)
+
+    def get_queryset(self):
+        queryset = Ingredient.objects.all()
+        filter_value = self.request.query_params.get('name', None)
+        if filter_value:
+            queryset = queryset.filter(name__icontains=filter_value)
+        return queryset
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
@@ -176,11 +174,18 @@ class AmountIngredientViewSet(viewsets.ModelViewSet):
     
 class APISubscribe(generics.ListAPIView):
     serializer_class = SubscribeSerializer
-    pagination_class = LimitOffsetPagination
+    pagination_class = SubscribePagination
 
     def get_queryset(self):
         queryset = User.objects.filter(subscribing__user=self.request.user)
         return queryset
+    
+  #  def get(self, request):
+  #      pages = self.paginate_queryset(
+  #          User.objects.filter(subscribing__user=self.request.user)
+  #      )
+  #      serializer = SubscribeSerializer(pages, many=True)
+  #      return self.get_paginated_response(serializer.data)
 
 
 class APICreateDeleteSubscribe(APIView):
