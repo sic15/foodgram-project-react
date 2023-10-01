@@ -48,18 +48,16 @@ REST_FRAMEWORK = {
          'rest_framework.authentication.TokenAuthentication',
    ],
    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 5,
+    'PAGE_SIZE': 6,
 
 } 
-#SIMPLE_JWT = {
-#   'ACCESS_TOKEN_LIFETIME': timedelta(days=100),
-##   'AUTH_HEADER_TYPES': ('Bearer',),
-#} 
 
 DJOSER = {
     'HIDE_USERS': False,
     'PERMISSIONS':
-        {'user': ['rest_framework.permissions.AllowAny'],
+        {#'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],
+        
+            'user': ['rest_framework.permissions.AllowAny'],
         'user_list': ['rest_framework.permissions.AllowAny'],}
 }
 
@@ -154,14 +152,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-#STATIC_URL = '/static/'
-#STATIC_ROOT = BASE_DIR / 'collected_static'
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'backend_static'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-STATIC_URL = '/static_backend/'
-STATIC_ROOT = BASE_DIR / 'static_backend'
+#STATIC_URL = '/static_backend/'
+#STATIC_ROOT = BASE_DIR / 'static_backend'
 
 #MEDIA_URL = '/media/'
 #MEDIA_ROOT = '/media'

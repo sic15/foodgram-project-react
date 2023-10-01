@@ -14,7 +14,7 @@ from djoser.views import UserViewSet as DjoserUserViewSet
 from food.models import Tag, Recipe, Ingredient, AmountIngredient, Favorite, ShoppingCart
 from .serializers import (TagSerializer, IngredientSerializer, 
                           RecipeReadSerializer, AmountIngredientSerializer, 
-                          UserinfoSerializer, SubscribeSerializer, 
+                          SubscribeSerializer, 
                           ShoppingCartSerializer, SubscribeCreateSerializer, 
                           RecipeChangeSerializer, PasswordSerializer, UserReadSerializer,
                           UserCreateSerializer, BaseRecipeSerializer)
@@ -66,12 +66,12 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
         return queryset
 
 class RecipeViewSet(viewsets.ModelViewSet):
-    queryset = Recipe.objects.all()
-    pagination_class = LimitOffsetPagination
+    queryset = Recipe.objects.all().order_by('id')
+    permission_classes = (IsAuthorChangeOnly,)
+ #   pagination_class = LimitOffsetPagination
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
-    permission_classes = (IsAuthorChangeOnly,)
-
+   
     def get_serializer_class(self):
         if self.action in ('list', 'retrive'):
             return RecipeReadSerializer
@@ -79,7 +79,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
-
 
     @action(detail=True, methods=['post', 'delete'],
         permission_classes=(IsAuthenticated,))
@@ -93,12 +92,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
             if not Favorite.objects.filter(user=request.user,
                                            recipe=recipe).exists():
                 Favorite.objects.create(user=request.user, recipe=recipe)
-             #   data={"name":recipe.name, "cooking_time":recipe.cooking_time, "image":recipe.image}
                 serializer=BaseRecipeSerializer(recipe)
-             #   serializer.is_valid()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
-              #  return Response({'detail': 'Рецепт успешно добавлен в избранное.'},
-              #                  status=status.HTTP_201_CREATED)
             return Response({'errors': 'Рецепт уже в избранном.'},
                             status=status.HTTP_400_BAD_REQUEST)
 
@@ -117,8 +112,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['get', 'post', 'delete'],
         permission_classes=(IsAuthenticated,))
     def shopping_cart(self, request, **kwargs):
-        
-
         if request.method == 'POST':
             try:
                 recipe = Recipe.objects.get(id=kwargs['pk'])
@@ -130,8 +123,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
                 ShoppingCart.objects.create(user=request.user, recipe=recipe)
                 serializer=BaseRecipeSerializer(recipe)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
-            #    return Response({'detail': 'Рецепт успешно добавлен в список покупок.'},
-            #                    status=status.HTTP_201_CREATED)
             return Response({'errors': 'Рецепт уже в списке покупок.'},
                             status=status.HTTP_400_BAD_REQUEST)
         
@@ -146,8 +137,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             object.delete()
             return Response({'detail': 'Рецепт успешно удален из списка покупок.'},
                             status=status.HTTP_204_NO_CONTENT)
-        
-    
+
     @action(detail=False, methods=['get'],
             permission_classes=(IsAuthenticated,))
     def download_shopping_cart(self, request, **kwargs):
@@ -215,28 +205,6 @@ class APICreateDeleteSubscribe(APIView):
         subscribe.delete()
         return Response({'message': 'Подписка успешно удалена.'}, status=status.HTTP_204_NO_CONTENT)
 
-"""
-class APIUser(generics.ListCreateAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserinfoSerializer
-    pagination_class = PageNumberPagination
-
-    @action(detail=True, methods=['post'])
-    def set_password(self, request):
-        user = self.get_object()
-        serializer = PasswordSerializer(data=request.data)
-        if serializer.is_valid():
-            user.password = serializer.validated_data['password']
-            user.save()
-            return Response({'status': 'password set'})
-        else:
-            return Response(serializer.errors,
-                            status=status.HTTP_400_BAD_REQUEST)
-
-class APIUserInfo(generics.RetrieveAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserinfoSerializer
- """   
 
 class APIShoppingCart(APIView):
     def get(self, request):

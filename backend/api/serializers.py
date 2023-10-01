@@ -1,3 +1,5 @@
+import base64
+from django.core.files.base import ContentFile
 
 from drf_base64.fields import Base64ImageField
 from django.shortcuts import get_object_or_404
@@ -113,6 +115,17 @@ class UserinfoSerializer(serializers.ModelSerializer):
             return Subscribe.objects.filter(user=self.context['request'].user,
                                             author=obj).exists()
         return False
+"""
+class Base64ImageField(serializers.ImageField):
+    def to_internal_value(self, data):
+        if isinstance(data, str) and data.startswith('data:image'):
+            format, imgstr = data.split(';base64,')
+            ext = format.split('/')[-1]
+
+            data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
+
+        return super().to_internal_value(data)
+"""
 
 class RecipeReadSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True)
@@ -144,11 +157,23 @@ class BaseRecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = ("id", "name", "cooking_time", "image")
-          
+
+ #   def to_representation(self, value):
+ #       return 1
+"""
+    def to_representation(self, instance):
+        print(instance)
+        filter_value = self.context['request'].query_params.get('recipes_limit', None)
+
+        print(filter_value)
+        return 1
+   """       
 
 class SubscribeSerializer(serializers.ModelSerializer):
     is_subscribed = serializers.SerializerMethodField()
     recipes = BaseRecipeSerializer(many=True, read_only=True)
+  #  recipes = serializers.SerializerMethodField()
+    
     recipes_count = serializers.SerializerMethodField()
     class Meta:
         model = User
@@ -160,6 +185,18 @@ class SubscribeSerializer(serializers.ModelSerializer):
             return Subscribe.objects.filter(user=self.context['request'].user,
                                             author=obj).exists()
         return False
+    
+    #def get_recipes(self, obj):
+    #    filter_value = self.context['request'].query_params.get('recipes_limit', None)
+    #    queryset = Recipe.objects.filter(author = obj)[:int(filter_value)]
+    #    recipes = BaseRecipeSerializer(queryset=queryset, many=True,)# read_only=True)
+      #  print(recipes.data)
+     #   print(recipes.data)
+
+      #  filter_value = self.request.query_params.get('name', None)
+      #  if filter_value:
+      #      queryset = queryset.filter(name__icontains=filter_value)
+      #  return recipes.data
     
     def get_recipes_count(self, obj):
         return obj.recipes.count()
@@ -207,7 +244,7 @@ class RecipeChangeSerializer(serializers.ModelSerializer):
     author = UserinfoSerializer(read_only=True)
     id = serializers.ReadOnlyField()
     ingredients = RecipeIngredientCreateSerializer(many=True)
-    image = Base64ImageField()
+    image = Base64ImageField(required=True, allow_null=False)
 
     class Meta:
         model = Recipe
@@ -226,6 +263,7 @@ class RecipeChangeSerializer(serializers.ModelSerializer):
     def validate_image(self, value):
         if not value:
             raise serializers.ValidationError({'error':'Добавьте картинку.'})
+        return value
 
     def validate_tags(self, value):
         if not value:

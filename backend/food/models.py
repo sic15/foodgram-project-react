@@ -49,13 +49,11 @@ class Recipe(models.Model):
     image = models.ImageField(
         'Картинка',
         upload_to='recipes/',
-      #  blank=True
     )
     ingredients = models.ManyToManyField(Ingredient, through='AmountIngredient')
     tags = models.ManyToManyField(Tag, related_name='recipe')
     
     class Meta:
-        ordering = ['name']
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
         
