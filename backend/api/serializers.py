@@ -158,7 +158,7 @@ class BaseRecipeSerializer(serializers.Serializer):
 class SubscribeSerializer(serializers.ModelSerializer):
     is_subscribed = serializers.SerializerMethodField()
     recipes = BaseRecipeSerializer(many=True, read_only=True)
-   # recipes = serializers.SerializerMethodField()
+    # recipes = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()
 
     class Meta:
