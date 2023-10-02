@@ -130,3 +130,6 @@ dmypy.json
 
 # .idea
 .idea
+
+/infra/nginx_резерв.conf
+/infra/docker-compose_резерв.yml
