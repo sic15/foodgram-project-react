@@ -22,9 +22,12 @@ services:
       - media:/app/media/
 
   frontend:
-    build:
-      context: ../frontend 
-      dockerfile: Dockerfile
+    image: sic15/food_frontend 
+    env_file: .env
+    command: cp -r /app/build/. /static/
+    #build:
+    #  context: ../frontend 
+    #  dockerfile: Dockerfile
     volumes:
       - ../frontend/:/app/result_build/
 
