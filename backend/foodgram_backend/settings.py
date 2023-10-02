@@ -1,7 +1,9 @@
 import os
-from datetime import timedelta
-
 from pathlib import Path
+
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -16,8 +18,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', default='0')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', default='True') == 'True'
 
-ALLOWED_HOSTS = ['62.84.123.59', '127.0.0.1', 'localhost']
-
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', default='127.0.0.1').split(',')
 
 # Application definition
 
@@ -38,27 +39,23 @@ INSTALLED_APPS = [
 ]
 
 REST_FRAMEWORK = {
-      'DEFAULT_PERMISSION_CLASSES': [
-   #     'rest_framework.permissions.AllowAny', 
-          
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly', 
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ],
 
     'DEFAULT_AUTHENTICATION_CLASSES': [
-         'rest_framework.authentication.TokenAuthentication',
-   ],
-   'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 6,
+        'rest_framework.authentication.TokenAuthentication',
+    ],
 
-} 
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 6,
+}
 
 DJOSER = {
     'HIDE_USERS': False,
     'PERMISSIONS':
-        {#'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],
-        
-            'user': ['rest_framework.permissions.AllowAny'],
-        'user_list': ['rest_framework.permissions.AllowAny'],}
+        {'user': ['rest_framework.permissions.AllowAny'],
+            'user_list': ['rest_framework.permissions.AllowAny'], }
 }
 
 MIDDLEWARE = [
@@ -94,9 +91,10 @@ TEMPLATES = [
 WSGI_APPLICATION = 'foodgram_backend.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 """
+для тестирования на базе данных SQLite необходимо раскомментировать строки 109-114
+и закомментировать строки 116-125
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -116,9 +114,6 @@ DATABASES = {
 }
 
 
-# Password validation
-# https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -134,10 +129,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
-# Internationalization
-# https://docs.djangoproject.com/en/3.2/topics/i18n/
-
 LANGUAGE_CODE = 'ru-RU'
 
 TIME_ZONE = 'UTC'
@@ -149,22 +140,11 @@ USE_L10N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.2/howto/static-files/
-
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'backend_static'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-#STATIC_URL = '/static_backend/'
-#STATIC_ROOT = BASE_DIR / 'static_backend'
-
-#MEDIA_URL = '/media/'
-#MEDIA_ROOT = '/media'
-
-# Default primary key field type
-# https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

@@ -4,6 +4,7 @@ from . import models
 
 admin.site.register(models.Subscribe)
 
+
 @admin.register(models.User)
 class UserAdmin(admin.ModelAdmin):
     list_display = (

@@ -1,8 +1,10 @@
-from rest_framework.pagination import PageNumberPagination, LimitOffsetPagination
-from rest_framework.response import Response
+from rest_framework.pagination import LimitOffsetPagination
+
 from user.models import User
 
-class SubscribePagination(LimitOffsetPagination):#PageNumberPagination):
+
+class SubscribePagination(LimitOffsetPagination):
     limit_query_param = 'recipes'
+
     class Meta:
         model = User

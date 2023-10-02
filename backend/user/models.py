@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.db import models
 
+
 class User(AbstractUser):
     username = models.CharField(
         max_length=40,
@@ -32,11 +33,12 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
-    
+
     class Meta:
         ordering = ['id']
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
+
 
 class Subscribe(models.Model):
     user = models.ForeignKey(
@@ -53,7 +55,8 @@ class Subscribe(models.Model):
     )
 
     def __str__(self):
-        return f'Пользователь {self.user.username} подписан на {self.author.username}'
+        return (f'Пользователь {self.user.username}'
+                f'подписан на {self.author.username}')
 
     class Meta:
         verbose_name = 'Подписка на авторов'
@@ -64,4 +67,3 @@ class Subscribe(models.Model):
                 name='unique_subscribe'
             )
         ]
-    

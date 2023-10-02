@@ -16,7 +16,6 @@ class Command(BaseCommand):
             csv_reader = csv.reader(csv_file, delimiter=',')
             for row in csv_reader:
                 name, measurement_unit = row
-               # name = row['name']
-               # measurement_unit = row['measurement_unit']
-                ingredient = Ingredient( name=name, measurement_unit=measurement_unit)
+                ingredient = Ingredient(name=name,
+                                        measurement_unit=measurement_unit)
                 ingredient.save()
