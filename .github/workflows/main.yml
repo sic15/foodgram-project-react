@@ -61,6 +61,7 @@ jobs:
           push: true
           tags: sic15/food_backend:latest 
 
+          
   build_frontend_and_push_to_docker_hub:
     name: Push frontend Docker image to DockerHub
     runs-on: ubuntu-latest
