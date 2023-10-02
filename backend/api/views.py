@@ -196,6 +196,7 @@ class APICreateDeleteSubscribe(APIView):
             return Response({'errors': 'Подписка уже существует.'},
                             status=status.HTTP_400_BAD_REQUEST)
 
+     #   x=self.request.query_params.get('recipes_limit')
         data = {'user': id, 'author': pk}
         serializer = SubscribeCreateSerializer(data=data)
         if serializer.is_valid():

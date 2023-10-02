@@ -40,7 +40,6 @@ class UserCreateSerializer(UserCreateSerializer):
         }
 
     def validate(self, obj):
-        print(obj)
         invalid_usernames = ['me', 'set_password',
                              'subscriptions', 'subscribe']
         if self.initial_data.get('username') in invalid_usernames:
@@ -149,7 +148,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         )
 
 
-class BaseRecipeSerializer(serializers.Serializer):
+class BaseRecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = ("id", 'name', "cooking_time", "image")
@@ -157,8 +156,7 @@ class BaseRecipeSerializer(serializers.Serializer):
 
 class SubscribeSerializer(serializers.ModelSerializer):
     is_subscribed = serializers.SerializerMethodField()
-    recipes = BaseRecipeSerializer(many=True, read_only=True)
-    # recipes = serializers.SerializerMethodField()
+    recipes = serializers.BaseRecipeSerializer(many=True, read_only=True)
     recipes_count = serializers.SerializerMethodField()
 
     class Meta:
@@ -182,7 +180,7 @@ class SubscribeSerializer(serializers.ModelSerializer):
 
     def get_recipes_count(self, obj):
         return obj.recipes.count()
-
+    
 
 class BaseSubscribeSerializer(serializers.ModelSerializer):
     class Meta:
