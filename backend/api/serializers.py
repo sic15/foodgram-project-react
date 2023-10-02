@@ -180,7 +180,7 @@ class SubscribeSerializer(serializers.ModelSerializer):
 
     def get_recipes_count(self, obj):
         return obj.recipes.count()
-    
+
 
 class BaseSubscribeSerializer(serializers.ModelSerializer):
     class Meta:
