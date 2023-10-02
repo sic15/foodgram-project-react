@@ -90,7 +90,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'foodgram_backend.wsgi.application'
 
-"""
+
 # для тестирования на базе данных SQLite необходимо раскомментировать строки 109-114
 # и закомментировать строки 116-125
 
@@ -111,7 +111,7 @@ DATABASES = {
         'PORT': os.getenv('DB_PORT', 5432)
     }
 }
-
+"""
 
 AUTH_PASSWORD_VALIDATORS = [
     {

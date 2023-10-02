@@ -149,8 +149,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         )
 
 
-class BaseRecipeSerializer(serializers.ModelSerializer):
-
+class BaseRecipeSerializer(serializers.Serializer):
     class Meta:
         model = Recipe
         fields = ("id", 'name', "cooking_time", "image")
@@ -159,6 +158,7 @@ class BaseRecipeSerializer(serializers.ModelSerializer):
 class SubscribeSerializer(serializers.ModelSerializer):
     is_subscribed = serializers.SerializerMethodField()
     recipes = BaseRecipeSerializer(many=True, read_only=True)
+   # recipes = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()
 
     class Meta:
