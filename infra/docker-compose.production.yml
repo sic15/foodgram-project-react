@@ -12,7 +12,7 @@ services:
     volumes:
       - pg_data:/var/lib/postgresql/data
     ports:
-      -5432:5432
+      - "5432:5432"
 
   backend:
     image: sic15/food_backend
@@ -43,7 +43,5 @@ services:
       - ../docs/:/usr/share/nginx/html/api/docs/
       - media:/var/html/media/
       - static:/var/html/static/
- 
-  #   - static:/static
     depends_on:
       - backend
