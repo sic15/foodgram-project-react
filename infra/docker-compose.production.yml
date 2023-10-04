@@ -18,13 +18,13 @@ services:
     depends_on:
       - db
     volumes:
-      - static:/app/backend_static/
+      - static:/backend_static/
       - media:/app/media/
 
   frontend:
     image: sic15/food_frontend 
     env_file: .env
-    command: cp -r /app/build/. /static/
+   #  command: cp -r /app/build/. /static/
    # build:
    #   context: ../frontend 
    #   dockerfile: Dockerfile
