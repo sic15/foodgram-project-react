@@ -90,10 +90,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'foodgram_backend.wsgi.application'
 
-"""
-# для тестирования на базе данных SQLite необходимо раскомментировать строки 109-114
-# и закомментировать строки 116-125
 
+# для тестирования на базе данных SQLite необходимо раскомментировать строки 96-102
+# и закомментировать строки 104-113
+"""
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -147,3 +147,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_URLS_REGEX = r'^/api/.*$'
+CSRF_TRUSTED_ORIGINS = ['http://localhost', 'http://localhost:8000', 'http://62.84.123.59']
