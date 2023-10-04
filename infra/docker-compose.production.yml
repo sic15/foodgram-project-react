@@ -11,6 +11,8 @@ services:
     env_file: .env
     volumes:
       - pg_data:/var/lib/postgresql/data
+    ports:
+      -5432:5432
 
   backend:
     image: sic15/food_backend
@@ -19,7 +21,6 @@ services:
       - db
     volumes:
       - static:/backend_static/
-
       - media:/app/media/
 
   frontend:
