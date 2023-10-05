@@ -39,4 +39,4 @@ services:
       - media:/app/media/
       - static:/static
     depends_on:
-      - backend
+      - backend 
