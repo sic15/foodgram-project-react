@@ -1,14 +1,15 @@
 from django.contrib import admin
 
-from .models import AmountIngredient, Ingredient, Favorite, Recipe, Tag
+from .models import AmountIngredient, Favorite, Ingredient, Recipe, Tag
 
 admin.site.register(AmountIngredient)
+admin.site.register(Favorite)
 
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
     readonly_fields = ('sudscriptions',)
-    fields = ['author', 'name', 'text', 
+    fields = ['author', 'name', 'text',
               'cooking_time', 'image', 'tags', 'sudscriptions']
     list_display = ['name', 'author']
     list_filter = ['author', 'name', 'tags']
