@@ -94,7 +94,7 @@ WSGI_APPLICATION = 'foodgram_backend.wsgi.application'
 # для тестирования на базе данных SQLite необходимо раскомментировать строки 96-102
 # и закомментировать строки 104-113
 
-"""
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -112,7 +112,7 @@ DATABASES = {
         'PORT': os.getenv('DB_PORT', 5432)
     }
 }
-
+"""
 
 AUTH_PASSWORD_VALIDATORS = [
     {
