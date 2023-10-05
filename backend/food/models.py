@@ -62,8 +62,6 @@ class Recipe(models.Model):
 
     def __str__(self):
         return self.name
-    def sudscriptions(self):
-        return '11'
 
 
 class AmountIngredient(models.Model):
