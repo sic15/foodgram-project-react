@@ -24,5 +24,5 @@ class TagAdmin(admin.ModelAdmin):
 
 
 @admin.register(Ingredient)
-class RecipeAdmin(admin.ModelAdmin):
+class IngredientAdmin(admin.ModelAdmin):
     list_filter = ['name']
