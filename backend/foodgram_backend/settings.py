@@ -90,7 +90,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'foodgram_backend.wsgi.application'
 
-
 # для тестирования на базе данных SQLite необходимо раскомментировать строки 96-102
 # и закомментировать строки 104-113
 
