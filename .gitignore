@@ -133,3 +133,4 @@ dmypy.json
 
 /infra/nginx_резерв.conf
 /infra/docker-compose_резерв.yml
+/backend/media/
