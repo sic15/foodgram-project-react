@@ -35,7 +35,8 @@ INSTALLED_APPS = [
     'drf_yasg',
     'user',
     'djoser',
-    'django_filters'
+    'django_filters',
+    'colorfield'
 ]
 
 REST_FRAMEWORK = {
@@ -91,9 +92,8 @@ TEMPLATES = [
 WSGI_APPLICATION = 'foodgram_backend.wsgi.application'
 
 
-# для тестирования на базе данных SQLite необходимо раскомментировать строки 96-102
-# и закомментировать строки 104-113
-
+# для тестирования на базе данных SQLite необходимо раскомментировать строки 99-104
+# и закомментировать строки 106-115
 
 """
 DATABASES = {
