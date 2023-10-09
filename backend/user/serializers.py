@@ -19,13 +19,13 @@ class UserReadSerializer(serializers.ModelSerializer):
 
     def get_is_subscribed(self, obj):
         request = self.context['request']
-        if (request and not request.user.is_anonymous):
+        if request and not request.user.is_anonymous:
             return Subscribe.objects.filter(user=request.user,
                                             author=obj).exists()
         return False
 
 
-class UserCreateSerializer(UserCreateSerializer):
+class UserCreationSerializer(UserCreateSerializer):
     class Meta:
         model = User
         fields = ('email', 'id', 'username',
@@ -63,24 +63,3 @@ class PasswordSerializer(serializers.Serializer):
         instance.set_password(validated_data['new_password'])
         instance.save()
         return validated_data
-
-
-class UserinfoSerializer(serializers.ModelSerializer):
-    is_subscribed = serializers.SerializerMethodField()
-
-    class Meta:
-        model = User
-        fields = (
-            "email",
-            "id",
-            "username",
-            "first_name",
-            "last_name",
-            'is_subscribed')
-
-    def get_is_subscribed(self, obj):
-        request = self.context['request']
-        if (request and not request.user.is_anonymous):
-            return Subscribe.objects.filter(user=request.user,
-                                            author=obj).exists()
-        return False

@@ -2,12 +2,12 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.db import models
 
-from core import constants as c
+from foodgram_backend import constants as c
 
 
 class User(AbstractUser):
     username = models.CharField(
-        max_length=c.MAX_USER_FIELD_LENGTH,
+        max_length=c.UserContant['MAX_USERNAME_LENGTH'],
         verbose_name='Username',
         unique=True,
         validators=[RegexValidator(
@@ -16,17 +16,17 @@ class User(AbstractUser):
         )]
     )
     email = models.EmailField(
-        max_length=c.MAX_USER_FIELD_LENGTH,
+        max_length=c.UserContant['MAX_USER_EMAIL_LENGTH'],
         unique=True,
         verbose_name='email',
     )
     first_name = models.CharField(
-        max_length=c.MAX_USER_FIELD_LENGTH,
+        max_length=c.UserContant['MAX_USER_NAME_LENGTH'],
         verbose_name='имя',
         blank=True
     )
     last_name = models.CharField(
-        max_length=c.MAX_USER_FIELD_LENGTH,
+        max_length=c.UserContant['MAX_USER_NAME_LENGTH'],
         verbose_name='фамилия',
         blank=True
     )

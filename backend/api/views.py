@@ -13,12 +13,12 @@ from rest_framework.views import APIView
 from food.models import (AmountIngredient, Favorite, Ingredient, Recipe,
                          ShoppingCart, Tag)
 from user.models import Subscribe, User
-from user.serializers import (PasswordSerializer, UserCreateSerializer,
+from user.serializers import (PasswordSerializer, UserCreationSerializer,
                               UserReadSerializer)
 
 from .filters import RecipeFilter
 from .pagination import SubscribePagination
-from .permissions import IsAuthorChangeOnly
+from .permissions import RecipePermission
 from .serializers import (AmountIngredientSerializer, BaseRecipeSerializer,
                           IngredientSerializer, RecipeChangeSerializer,
                           RecipeReadSerializer, ShoppingCartSerializer,
@@ -33,7 +33,7 @@ class UserViewSet(DjoserUserViewSet):
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):
             return UserReadSerializer
-        return UserCreateSerializer
+        return UserCreationSerializer
 
     @action(detail=False, methods=['get'],
             pagination_class=None,
@@ -73,7 +73,7 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all().order_by('id')
-    permission_classes = (IsAuthorChangeOnly,)
+    permission_classes = (RecipePermission,)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
 
