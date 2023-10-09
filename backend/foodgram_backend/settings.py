@@ -41,14 +41,14 @@ INSTALLED_APPS = [
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly'
     ],
 
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
     ],
 
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 6,
 }
 
@@ -56,7 +56,7 @@ DJOSER = {
     'HIDE_USERS': False,
     'PERMISSIONS':
         {'user': ['rest_framework.permissions.AllowAny'],
-            'user_list': ['rest_framework.permissions.AllowAny'], }
+         'user_list': ['rest_framework.permissions.AllowAny']}
 }
 
 MIDDLEWARE = [
@@ -92,7 +92,12 @@ TEMPLATES = [
 WSGI_APPLICATION = 'foodgram_backend.wsgi.application'
 
 
-DATABASES = {
+BASE = [{'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': str(os.path.join(BASE_DIR, "db.sqlite3")),
+        }
+},
+    {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('POSTGRES_DB', 'django'),
@@ -101,9 +106,9 @@ DATABASES = {
         'HOST': os.getenv('DB_HOST', ''),
         'PORT': os.getenv('DB_PORT', 5432)
     }
-}
+}]
 
-
+DATABASES = BASE[0] if DEBUG is True else BASE[1]
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -141,4 +146,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_URLS_REGEX = r'^/api/.*$'
-CSRF_TRUSTED_ORIGINS = ['http://localhost', 'http://localhost:8000', 'http://62.84.123.59', 'https://tasty-food.sytes.net']
+CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', default='http://localhost').split(',')
+
+['http://localhost', 'http://localhost:8000', 'http://62.84.123.59', 'https://tasty-food.sytes.net']

@@ -19,13 +19,14 @@ urlpatterns = [
         'users/subscriptions/',
         views.APISubscribe.as_view()),
     path(
+        '',
+        include(
+            router.urls)),
+    path(
         'auth/',
         include('djoser.urls.authtoken')),
     path(
         '',
         include('djoser.urls')),
-    path(
-        '',
-        include(
-            router.urls)),
+
 ]

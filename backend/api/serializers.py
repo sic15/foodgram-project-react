@@ -105,12 +105,6 @@ class RecipeChangeSerializer(serializers.ModelSerializer):
                   'name', 'text',
                   'cooking_time', 'author')
 
-    def validate_cooking_time(self, value):
-        if not value:
-            raise serializers.ValidationError(
-                {'error': 'Время приготовления не может быть 0.'})
-        return value
-
     def validate_image(self, value):
         if not value:
             raise serializers.ValidationError({'error': 'Добавьте картинку.'})

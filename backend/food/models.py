@@ -65,7 +65,8 @@ class Recipe(models.Model):
         validators=(
             MinValueValidator(
                 c.FoodContant.MIN_COOKING_TIME,
-                "Время приготовления не может быть 0"),
+                f"Время приготовления не может быть"
+                f"{c.FoodContant.MIN_COOKING_TIME}"),
             MaxValueValidator(
                 c.FoodContant.MAX_COOKING_TIME,
                 "Время приготовления не может быть таким большим")))
@@ -94,7 +95,8 @@ class AmountIngredient(models.Model):
     amount = models.PositiveSmallIntegerField(
         verbose_name='Количество', validators=(
             MinValueValidator(
-                c.FoodContant.MIN_AMOUNT, 'Количество не может быть 0'),))
+                c.FoodContant.MIN_AMOUNT,
+                f'Количество не может быть {c.FoodContant.MIN_AMOUNT}'),))
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,

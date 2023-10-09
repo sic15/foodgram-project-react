@@ -5,7 +5,6 @@ from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet as DjoserUserViewSet
 from rest_framework import generics, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -27,7 +26,6 @@ from .serializers import (AmountIngredientSerializer, BaseRecipeSerializer,
 
 
 class UserViewSet(DjoserUserViewSet):
-    pagination_class = PageNumberPagination
     permission_classes = (AllowAny,)
 
     def get_serializer_class(self):
@@ -38,10 +36,8 @@ class UserViewSet(DjoserUserViewSet):
     @action(detail=False, methods=['get'],
             pagination_class=None,
             permission_classes=(IsAuthenticated,))
-    def me(self, request):
-        serializer = UserReadSerializer(request.user)
-        return Response(serializer.data,
-                        status=status.HTTP_200_OK)
+    def me(self, request, *args, **kwargs):
+        return super().me(request, *args, **kwargs)
 
     @action(detail=False, methods=['post'],
             permission_classes=(IsAuthenticated,))
