@@ -95,18 +95,17 @@ if DEBUG:
     DATABASES = {'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': str(os.path.join(BASE_DIR, "db.sqlite3")),
-        }
+    }
     }
 else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.getenv('POSTGRES_DB', 'django'),
-            'USER': os.getenv('POSTGRES_USER', 'django'),
-            'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
-            'HOST': os.getenv('DB_HOST', ''),
-            'PORT': os.getenv('DB_PORT', 5432)
-        }
+    DATABASES = {'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('POSTGRES_DB', 'django'),
+        'USER': os.getenv('POSTGRES_USER', 'django'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
+        'HOST': os.getenv('DB_HOST', ''),
+        'PORT': os.getenv('DB_PORT', 5432)
+    }
     }
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -146,6 +145,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_URLS_REGEX = r'^/api/.*$'
-CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', default='http://localhost').split(',')
+CSRF_TRUSTED_ORIGINS = os.environ.get(
+    'CSRF_TRUSTED_ORIGINS',
+    default='http://localhost').split(',')
 
-['http://localhost', 'http://localhost:8000', 'http://62.84.123.59', 'https://tasty-food.sytes.net']
+['http://localhost', 'http://localhost:8000',
+    'http://62.84.123.59', 'https://tasty-food.sytes.net']
