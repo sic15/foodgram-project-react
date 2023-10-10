@@ -16,7 +16,7 @@ from user.serializers import (PasswordSerializer, UserCreationSerializer,
                               UserReadSerializer)
 
 from .filters import RecipeFilter
-from .pagination import RecipePagination, SubscribePagination
+from .pagination import CustomPagination, SubscribePagination
 from .permissions import RecipePermission
 from .serializers import (AmountIngredientSerializer, BaseRecipeSerializer,
                           IngredientSerializer, RecipeChangeSerializer,
@@ -27,6 +27,7 @@ from .serializers import (AmountIngredientSerializer, BaseRecipeSerializer,
 
 class UserViewSet(DjoserUserViewSet):
     permission_classes = (AllowAny,)
+    pagination_class=CustomPagination
 
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):
@@ -69,8 +70,8 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all().order_by('id')
+    pagination_class = CustomPagination
     permission_classes = (RecipePermission,)
-    pagination_class = RecipePagination
     filter_backends = (DjangoFilterBackend,)
     filterset_class = RecipeFilter
 
@@ -157,7 +158,7 @@ class AmountIngredientViewSet(viewsets.ModelViewSet):
 
 class APISubscribe(generics.ListAPIView):
     serializer_class = SubscribeSerializer
-    pagination_class = SubscribePagination
+    pagination_class = SubscribePagination 
 
     def get_queryset(self):
         queryset = User.objects.filter(subscribing__user=self.request.user)
