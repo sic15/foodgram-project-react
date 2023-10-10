@@ -33,8 +33,7 @@ class UserCreationSerializer(UserCreateSerializer):
                   'password')
 
     def validate(self, data):
-        invalid_usernames = ['me', 'set_password',
-                             'subscriptions', 'subscribe']
+        invalid_usernames = ['me', 'set_password', 'subscriptions']
         if self.initial_data.get('username') in invalid_usernames:
             raise serializers.ValidationError(
                 {'username': 'Вы не можете использовать этот username.'}
