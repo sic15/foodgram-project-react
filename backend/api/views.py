@@ -27,7 +27,7 @@ from .serializers import (AmountIngredientSerializer, BaseRecipeSerializer,
 
 class UserViewSet(DjoserUserViewSet):
     permission_classes = (AllowAny,)
-    pagination_class=CustomPagination
+    pagination_class = CustomPagination
 
     def get_serializer_class(self):
         if self.action in ('list', 'retrieve'):
@@ -158,7 +158,7 @@ class AmountIngredientViewSet(viewsets.ModelViewSet):
 
 class APISubscribe(generics.ListAPIView):
     serializer_class = SubscribeSerializer
-    pagination_class = SubscribePagination 
+    pagination_class = SubscribePagination
 
     def get_queryset(self):
         queryset = User.objects.filter(subscribing__user=self.request.user)
