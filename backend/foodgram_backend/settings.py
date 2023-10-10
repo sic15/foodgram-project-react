@@ -3,6 +3,8 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
+from foodgram_backend import constants as c
+
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -48,8 +50,8 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ],
 
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE': 6,
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': c.FoodContant.PAGE_SIZE,
 }
 
 DJOSER = {
@@ -97,6 +99,7 @@ if DEBUG:
         'NAME': str(os.path.join(BASE_DIR, "db.sqlite3")),
     }
     }
+
 else:
     DATABASES = {'default': {
         'ENGINE': 'django.db.backends.postgresql',

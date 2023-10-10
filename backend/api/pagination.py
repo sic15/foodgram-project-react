@@ -1,5 +1,7 @@
-from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.pagination import (LimitOffsetPagination,
+                                       PageNumberPagination)
 
+from foodgram_backend import constants as c
 from user.models import User
 
 
@@ -8,3 +10,8 @@ class SubscribePagination(LimitOffsetPagination):
 
     class Meta:
         model = User
+
+
+class RecipePagination(PageNumberPagination):
+    page_size_query_param = 'limit'
+    page_size = c.FoodContant.PAGE_SIZE

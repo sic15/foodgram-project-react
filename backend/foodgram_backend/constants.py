@@ -15,3 +15,4 @@ class FoodContant(IntEnum):
     MIN_COOKING_TIME = 1
     MAX_COOKING_TIME = 10000
     MAX_INGREDIENT_NAME = 200
+    PAGE_SIZE = 6
