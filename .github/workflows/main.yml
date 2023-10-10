@@ -120,7 +120,7 @@ jobs:
     steps:
     - name: Send message
       uses: appleboy/telegram-action@master
-      with: 
+      with:
         to: ${{ secrets.TELEGRAM_TO }}
         token: ${{ secrets.TELEGRAM_TOKEN }}
         message: Деплой успешно выполнен!
