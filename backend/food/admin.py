@@ -2,7 +2,7 @@ from django.contrib import admin
 
 from .models import AmountIngredient, Favorite, Ingredient, Recipe, Tag
 
-admin.site.register(AmountIngredient)
+admin.site.register(Ingredient)
 admin.site.register(Favorite)
 
 
@@ -23,6 +23,11 @@ class TagAdmin(admin.ModelAdmin):
     fields = ['name', 'color']
 
 
-@admin.register(Ingredient)
-class IngredientAdmin(admin.ModelAdmin):
-    list_filter = ['name']
+@admin.register(AmountIngredient)
+class AmountIngredientAdmin(admin.ModelAdmin):
+    readonly_fields = ('measurement_unit', )
+    fields = ['recipe', 'ingredient', ('amount', 'measurement_unit')]
+
+    def measurement_unit(self, obj):
+        return obj.ingredient.measurement_unit
+    measurement_unit.short_description = ''

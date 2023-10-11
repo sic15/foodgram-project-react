@@ -29,15 +29,11 @@ class Tag(models.Model):
 
 
 class Ingredient(models.Model):
-    MEASURE_CHOISES = [('g', 'г'), ('kg', 'кг'), ('l', 'л'),
-                       ('ml', 'мл'), ('piece', 'шт')]
-
     name = models.CharField(
         max_length=c.FoodContant.MAX_INGREDIENT_NAME,
         verbose_name='Название рецепта')
     measurement_unit = models.CharField(
         max_length=c.FoodContant.MAX_MEASUREMENT_UNIT_LENGTH,
-        choices=MEASURE_CHOISES,
         verbose_name='Единица измерения')
 
     class Meta:
@@ -112,6 +108,9 @@ class AmountIngredient(models.Model):
                 name='unique_combination'
             )
         ]
+
+    def __str__(self):
+        return f'Рецепт {self.recipe} содержит {self.amount} {self.ingredient}'
 
 
 class UniqueTogetherFields(models.Model):

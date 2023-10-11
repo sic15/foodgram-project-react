@@ -44,14 +44,14 @@ class RecipeReadSerializer(serializers.ModelSerializer):
     author = UserReadSerializer(read_only=True)
     ingredients = RecipeIngredientSerializer(
         many=True, read_only=True, source='recipe')
-    is_favorite = serializers.SerializerMethodField()
+    is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
 
     class Meta:
         model = Recipe
         fields = '__all__'
 
-    def get_is_favorite(self, obj):
+    def get_is_favorited(self, obj):
         return (
             self.context.get('request').user.is_authenticated
             and Favorite.objects.filter(user=self.context['request'].user,
@@ -180,7 +180,7 @@ class RecipeChangeSerializer(serializers.ModelSerializer):
         AmountIngredient.objects.bulk_create(
             [
                 AmountIngredient(
-                    ingredient=Ingredient.objects.get(id=id),
+                    ingredient=Ingredient.objects.get(id=ingredient['id']),
                     recipe=instance,
                     amount=ingredient['amount']
                 )
